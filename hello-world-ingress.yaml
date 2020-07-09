@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hello-world-ingress
+  annotations:
+   kubernetes.io/ingress.class: "citrix"
+   ingress.citrix.com/frontend-ip: "172.16.1.55"
+   ingress.citrix.com/lbvserver: '{"hello-world":{"lbmethod":"ROUNDROBIN", "persistenceType":"NONE"}}'
+spec:
+  rules:
+  - host:  www.hello.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hello-world
+          servicePort: 80
