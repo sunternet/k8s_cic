@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pathbased-ingress
+  annotations:
+   kubernetes.io/ingress.class: "citrix"
+   ingress.citrix.com/frontend-ip: "172.16.1.55"
+   ingress.citrix.com/lbvserver: '{"hello-world":{"lbmethod":"ROUNDROBIN", "persistenceType":"NONE"}}'
+   ingress.citrix.com/lbvserver: '{"foo-bar":{"lbmethod":"SOURCEIPHASH", "persistenceType":"NONE"}}'
+spec:
+  rules:
+  - host:  www.hello.com
+    http:
+      paths:
+      - path: /world
+        backend:
+          serviceName: hello-world
+          servicePort: 80
+      - path: /foobar
+        backend:
+          serviceName: foo-bar
+          servicePort: 80

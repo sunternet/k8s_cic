@@ -98,8 +98,25 @@ kubectl get pods
 kubectl describe pod cic-k8s-ingress-controller-xxx
 
 # Create a Ingress Controller
+kubectl apply -f hello-world-ingress.yaml
+kubectl get ingress
 
 # On Master
 curl http://$NS_VIP
 curl http://$NS_VIP --header 'Host: www.hello.com'
 curl http://www.hello.com:80/ --resolve www.hello.com:80:$NS_VIP
+
+# How traffice goes? N-S? E-W?
+
+# Scale App down
+kubectl scale --replicas=2 deployment.apps/hello-world
+# Check NS ServiceGroup
+show run | grep k8s
+
+# Scale App up
+kubectl scale --replicas=3 deployment.apps/hello-world
+show run | grep k8s
+
+# ADC will do LB for N-S trffice, will Kubernets Service do E-W LB as well?
+# Let's try unbind serviceGroup manually on ADC
+unbind serviceGroup ...
