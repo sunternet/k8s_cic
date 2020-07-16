@@ -21,5 +21,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: foo-bar
+          serviceName: foobar
           servicePort: 80
