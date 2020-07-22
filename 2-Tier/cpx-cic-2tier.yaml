@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpx-2tier
+spec:
+  selector:
+    matchLabels:
+      app: cpx-2tier
+  replicas: 1
+  template:
+    metadata:
+      name: cpx-2tier
+      labels:
+        app: cpx-2tier
+        app1: exporter
+      annotations:
+        NETSCALER_AS_APP: "True"
+    spec:
+      serviceAccountName: cpx
+      containers:
+        - name: cpx-2tier
+          image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103"
+          securityContext:
+             privileged: true
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "KUBERNETES_TASK_ID"
+            value: ""
+          imagePullPolicy: Always
+        # Add cic as a sidecar
+        - name: cic
+          image: "quay.io/citrix/citrix-k8s-ingress-controller:1.6.1"
+          env:
+          - name: "EULA"
+            value: "yes"
+          - name: "NS_IP"
+            value: "127.0.0.1"
+          - name: "NS_PROTOCOL"
+            value: "HTTP"
+          - name: "NS_PORT"
+            value: "80"
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
+          - name: "NS_ENABLE_MONITORING"
+            value: "YES"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          args:
+            - --ingress-classes
+              cpx
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-cpx-2tier
+  labels:
+    app: service-cpx-2tier
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+    targetPort: 80
+  selector:
+    app: cpx-2tier
