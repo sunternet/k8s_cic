@@ -82,22 +82,22 @@ curl http://$Node1_IP:$NodePort
 ############################
 # LoadBalancer/Ingress type
 ############################
-# Add another App
-kubectl create deployment foobar --image=k8s.gcr.io/echoserver:1.4
-kubectl scale --replicas=3 deployment.apps/foobar
-kubectl expose deployment foobar --port=80 --target-port=8080 --type NodePort
 
 # Prepare the ADC
 add system user cic mypassword
 bind system user cic superuser 0
 add ns ip 172.16.x.x 255.255.255.0 -type SNIP
+# If you are in a cloud environment, add SNIP and VIP in cloud IP Management so cloud network will allow the traffic in/out for the IPs.
 
 # On K8s Master
+# Create a secret which store the ADC login credential
 kubectl create secret  generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
+# Get the CIC deployment yaml file
 wget  https://raw.githubusercontent.com/citrix/citrix-k8s-ingress-controller/master/deployment/baremetal/citrix-k8s-ingress-controller.yaml
 vi ./citrix-k8s-ingress-controller.yaml
 # Change NS_IP
 # Change NS_USER and NS_PASSWORD to use the secret created before
+# Check the "--ingress-classes" arg
 
 kubectl create -f citrix-k8s-ingress-controller.yaml
 kubectl get pods
@@ -112,8 +112,12 @@ curl http://$NS_VIP
 curl http://$NS_VIP --header 'Host: www.hello.com'
 curl http://www.hello.com:80/ --resolve www.hello.com:80:$NS_VIP
 
-# How traffice goes? N-S? E-W?
+# Check LB
+curl http://$NS_VIP --header 'Host: www.hello.com'
+curl http://$NS_VIP --header 'Host: www.hello.com'
+curl http://$NS_VIP --header 'Host: www.hello.com'
 
+# How traffice goes? N-S? E-W?
 # Scale App down
 kubectl scale --replicas=2 deployment.apps/hello-world
 # Check NS ServiceGroup
@@ -126,6 +130,28 @@ show run | grep k8s
 # ADC will do LB for N-S trffice, will Kubernets Service do E-W LB as well?
 # Let's try unbind serviceGroup manually on ADC
 unbind serviceGroup ...
+
+# Let's try namebased
+kubectl delete ingress hello-world-ingress
+show ns runningConfig | grep k8s
+
+# Add another App
+kubectl create deployment foobar --image=k8s.gcr.io/echoserver:1.4
+kubectl scale --replicas=3 deployment.apps/foobar
+kubectl expose deployment foobar --port=80 --target-port=8080 --type NodePort
+
+kubectl apply -f namebased-ingress.yaml
+show ns runningConfig | grep k8s
+
+curl http://$NS_VIP --header 'Host: www.hello.com'
+curl http://$NS_VIP --header 'Host: www.foobar.com'
+
+# Let's try pathbased
+kubectl delete ingress namebased-ingress
+kubectl apply -f pathbased-ingress.yaml
+
+curl http://$NS_VIP/world --header 'Host: www.hello.com'
+curl http://$NS_VIP/foobar --header 'Host: www.hello.com'
 
 ##########################
 # 2-Tier Deployment
