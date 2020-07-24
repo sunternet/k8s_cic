@@ -79,8 +79,9 @@ curl http://$Node1_IP:$NodePort
 curl http://$Node1_IP:$NodePort
 curl http://$Node1_IP:$NodePort
 
+############################
 # LoadBalancer/Ingress type
-#
+############################
 # Add another App
 kubectl create deployment foobar --image=k8s.gcr.io/echoserver:1.4
 kubectl scale --replicas=3 deployment.apps/foobar
