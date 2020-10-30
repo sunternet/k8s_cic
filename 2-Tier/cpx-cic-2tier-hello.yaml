@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cpx-2tier
+  name: cpx-hello
 spec:
   selector:
     matchLabels:
-      app: cpx-2tier
+      app: cpx-hello
   replicas: 1
   template:
     metadata:
-      name: cpx-2tier
+      name: cpx-hello
       labels:
-        app: cpx-2tier
+        app: cpx-hello
         app1: exporter
       annotations:
         NETSCALER_AS_APP: "True"
     spec:
       serviceAccountName: cpx
       containers:
-        - name: cpx-2tier
+        - name: cpx-hello
           image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103"
           securityContext:
              privileged: true
@@ -64,9 +64,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-cpx-2tier
+  name: service-cpx-hello
   labels:
-    app: service-cpx-2tier
+    app: service-cpx-hello
 spec:
   type: NodePort
   ports:
@@ -75,4 +75,4 @@ spec:
     name: http
     targetPort: 80
   selector:
-    app: cpx-2tier
+    app: cpx-hello
