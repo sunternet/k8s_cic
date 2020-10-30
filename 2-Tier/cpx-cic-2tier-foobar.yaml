@@ -16,7 +16,7 @@ spec:
       annotations:
         NETSCALER_AS_APP: "True"
     spec:
-      serviceAccountName: cpx
+      serviceAccountName: foobar-cpx
       containers:
         - name: cpx-foobar
           image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103"
