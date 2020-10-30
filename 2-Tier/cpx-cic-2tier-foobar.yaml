@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cpx-hello
+  name: cpx-foobar
 spec:
   selector:
     matchLabels:
-      app: cpx-hello
+      app: cpx-foobar
   replicas: 1
   template:
     metadata:
-      name: cpx-hello
+      name: cpx-foobar
       labels:
-        app: cpx-hello
+        app: cpx-foobar
         app1: exporter
       annotations:
         NETSCALER_AS_APP: "True"
     spec:
       serviceAccountName: cpx
       containers:
-        - name: cpx-hello
+        - name: cpx-foobar
           image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103"
           securityContext:
              privileged: true
@@ -56,7 +56,7 @@ spec:
                 fieldPath: metadata.namespace
           args:
             - --ingress-classes
-              cpx-hello
+              cpx-foobar
           imagePullPolicy: Always
 
 ---
@@ -64,9 +64,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-cpx-hello
+  name: service-cpx-foobar
   labels:
-    app: service-cpx-hello
+    app: service-cpx-foobar
 spec:
   type: NodePort
   ports:
@@ -75,4 +75,4 @@ spec:
     name: http
     targetPort: 80
   selector:
-    app: cpx-hello
+    app: cpx-foobar
