@@ -84,9 +84,10 @@ curl http://$Node1_IP:$NodePort
 ############################
 
 # Prepare the ADC
+# If in AWS, use Citrix ADC VPX Express - 20 Mbps, t2.medium
 add system user cic mypassword
 bind system user cic superuser 0
-add ns ip 172.16.x.x 255.255.255.0 -type SNIP
+add ns ip 172.16.1.54 255.255.255.0 -type SNIP
 # If you are in a cloud environment, add SNIP and VIP in cloud IP Management so cloud network will allow the traffic in/out for the IPs.
 
 # On K8s Master
@@ -157,33 +158,33 @@ curl http://$NS_VIP/foobar --header 'Host: www.hello.com'
 # 2-Tier Deployment
 ##########################
 # Create a namespace for the environment
-kubectl create namespace 2tier
+kubectl create namespace 2t
 
 # Create backend http server pods
-kubectl create deployment hello-world --image=gcr.io/google-samples/hello-app:1.0 -n 2tier
-kubectl scale --replicas=3 deployment.apps/hello-world -n 2tier
+kubectl create deployment hello-world --image=gcr.io/google-samples/hello-app:1.0 -n 2t
+kubectl scale --replicas=3 deployment.apps/hello-world -n 2t
 
 # expose as Headless Services
-kubectl apply -f headlessHTTPService.yaml -n 2tier
+kubectl apply -f headlessHTTPService.yaml -n 2t
 
 # Let's first deploy the 2nd tier CPX
 # create rbac account for cpx
-kubectl get serviceaccount -n 2tier
+kubectl get serviceaccount -n 2t
 
 # create cpx with cic as a sidecar and expose as a service
-kubectl apply -f cpx-cic-2tier.yaml -n 2tier
+kubectl apply -f cpx-cic-2t.yaml -n 2t
 
 # create the ingress object
-kubectl apply -f ingress-2tier.yaml -n 2tier
+kubectl apply -f ingress-2t.yaml -n 2t
 
 # check the ingress
 # you will see backend http server listed in "Backends"
-kubectl describe ingress ingress-2tier -n 2tier
+kubectl describe ingress ingress-2t -n 2t
 
 # Access CPX lb service
-kubectl get pods -n 2tier -o wide
+kubectl get pods -n 2t -o wide
 curl http://$CPX_POD_IP --header 'Host: www.hello.com'
-kubectl get service -n 2tier -o wide
+kubectl get service -n 2t -o wide
 curl http://$CPX_Cluster_IP --header 'Host: www.hello.com'
 curl http://$CPX_NODE_IP:NODEPORT --header 'Host: www.hello.com'
 
@@ -196,13 +197,13 @@ bind system user cic superuser 0
 add ns ip 172.16.x.x 255.255.255.0 -type SNIP
 
 # create the secret in namespace
-kubectl create secret  generic nslogin --from-literal=username='cic' --from-literal=password='mypassword' -n 2tier
+kubectl create secret  generic nslogin --from-literal=username='cic' --from-literal=password='mypassword' -n 2t
 
 # Deploy the 1st-tier CIC
-kubectl apply -f cic-1tier.yaml -n 2tier
+kubectl apply -f cic-1tier.yaml -n 2t
 
 # Create the 1st-tier Ingress object
-kubectl apply -f ingress-1tier.yaml -n 2tier
+kubectl apply -f ingress-1tier.yaml -n 2t
 
 # Access the 1st-tier VPX VIP
 curl http://$VPX_VIP --header 'Host: www.hello.com'
