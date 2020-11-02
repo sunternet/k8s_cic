@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cpx-hello
+  name: cpx-cic-hello
 spec:
   selector:
     matchLabels:
-      app: cpx-hello
+      app: cpx-cic-hello
   replicas: 1
   template:
     metadata:
-      name: cpx-hello
+      name: cpx-cic-hello
       labels:
-        app: cpx-hello
+        app: cpx-cic-hello
       annotations:
     spec:
-      serviceAccountName:  hello-cpx
+      serviceAccountName:  Acc-hello-ctx
       containers:
         - name: cpx-hello
           image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
@@ -25,10 +25,10 @@ spec:
             value: "yes"
           - name: "KUBERNETES_TASK_ID"
             value: ""
-          - name: "NS_HTTP_PORT"
-            value: "9080"
-          - name: "NS_HTTPS_PORT"
-            value: "9443"
+          # - name: "NS_HTTP_PORT"
+          #   value: "9080"
+          # - name: "NS_HTTPS_PORT"
+          #   value: "9443"
           imagePullPolicy: Always
         # Add cic as a sidecar
         - name: cic-hello
@@ -71,7 +71,7 @@ spec:
                 fieldPath: metadata.namespace
           args:
             - --ingress-classes
-              cpx-hello
+              ctx-ingress-hello
           imagePullPolicy: Always
 
 ---
@@ -79,9 +79,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-cpx-hello
+  name: service-cpx-cic-hello
   labels:
-    app: service-cpx-hello
+    app: service-cpx-cic-hello
 spec:
   type: NodePort
   ports:
@@ -94,4 +94,4 @@ spec:
     name: https
     targetPort: 443
   selector:
-    app: cpx-hello
+    app: cpx-cic-hello
