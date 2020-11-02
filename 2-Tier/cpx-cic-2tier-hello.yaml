@@ -14,7 +14,7 @@ spec:
         app: cpx-cic-hello
       annotations:
     spec:
-      serviceAccountName:  Acc-hello-ctx
+      serviceAccountName:  acc-hello-ctx
       containers:
         - name: cpx-hello
           image: "quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24"
