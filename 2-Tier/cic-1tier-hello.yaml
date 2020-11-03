@@ -22,6 +22,8 @@ spec:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
          - name: "NS_IP"
            value: "172.16.1.53"
+         - name: "NAMESPACE"
+           value: "hello"
          # Set username for Nitro
          - name: "NS_USER"
            valueFrom:
