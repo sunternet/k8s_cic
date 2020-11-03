@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cic-vpx-foobar
+spec:
+  selector:
+    matchLabels:
+      app: cic-vpx-foobar
+  replicas: 1
+  template:
+    metadata:
+      name: cic-vpx-foobar
+      labels:
+        app: cic-vpx-foobar
+      annotations:
+    spec:
+      serviceAccountName: acc-foobar-ctx
+      containers:
+      - name: cic-vpx-foobar
+        image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
+        env:
+         # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
+         - name: "NS_IP"
+           value: "172.16.1.53"
+         # enviroment variable to listien for a specific namespace for k8s events
+         - name: "NAMESPACE"
+           value: "foobar"
+         # Set username for Nitro
+         - name: "NS_USER"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin-vpx
+             key: username
+         # Set user password for Nitro
+         - name: "NS_PASSWORD"
+           valueFrom:
+            secretKeyRef:
+             name: nslogin-vpx
+             key: password
+         # Set log level
+         - name: "EULA"
+           value: "yes"
+        args:
+          - --ingress-classes
+            ctx-ingress-vpx-foobar
+          - --feature-node-watch
+            false
+        imagePullPolicy: Always
