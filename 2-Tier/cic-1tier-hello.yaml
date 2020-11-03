@@ -14,7 +14,7 @@ spec:
         app: cic-vpx-hello
       annotations:
     spec:
-      serviceAccountName: cpx
+      serviceAccountName: acc-hello-ctx
       containers:
       - name: cic-vpx-hello
         image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
