@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cic-k8s-ingress-controller
+  name: cic-vpx-foobar
 spec:
   selector:
     matchLabels:
-      app: cic-k8s-ingress-controller
+      app: cic-vpx-foobar
   replicas: 1
   template:
     metadata:
-      name: cic-k8s-ingress-controller
+      name: cic-vpx-foobar
       labels:
-        app: cic-k8s-ingress-controller
+        app: cic-vpx-foobar
       annotations:
     spec:
       serviceAccountName: cpx
       containers:
-      - name: cic-k8s-ingress-controller
+      - name: cic-vpx-foobar
         image: "quay.io/citrix/citrix-k8s-ingress-controller:1.8.19"
         env:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
