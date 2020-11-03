@@ -22,6 +22,9 @@ spec:
          # Set NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
          - name: "NS_IP"
            value: "172.16.1.53"
+         # enviroment variable to listien for a specific namespace for k8s events
+         - name: "NAMESPACE"
+           value: "foobar"
          # Set username for Nitro
          - name: "NS_USER"
            valueFrom:
