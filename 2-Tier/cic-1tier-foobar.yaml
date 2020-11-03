@@ -26,20 +26,20 @@ spec:
          - name: "NS_USER"
            valueFrom:
             secretKeyRef:
-             name: nslogin
+             name: nslogin-vpx
              key: username
          # Set user password for Nitro
          - name: "NS_PASSWORD"
            valueFrom:
             secretKeyRef:
-             name: nslogin
+             name: nslogin-vpx
              key: password
          # Set log level
          - name: "EULA"
            value: "yes"
         args:
           - --ingress-classes
-            vpx
+            ctx-ingress-vpx-foobar
           - --feature-node-watch
             false
         imagePullPolicy: Always
