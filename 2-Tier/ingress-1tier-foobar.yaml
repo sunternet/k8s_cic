@@ -1,18 +1,18 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: ingress-1tier
+  name: ingress-1tier-foobar
   annotations:
-   kubernetes.io/ingress.class: "vpx"
+   kubernetes.io/ingress.class: "ctx-ingress-vpx-foobar"
    ingress.citrix.com/insecure-termination: "redirect"
    # change the frontend-ip to the VIP you want to create
    ingress.citrix.com/frontend-ip: "172.16.1.55"
 spec:
   rules:
-  - host:  www.hello.com
+  - host:  www.foobar.com
     http:
       paths:
       - path:
         backend:
-          serviceName: service-cpx-2tier
+          serviceName: service-cpx-cic-foobar
           servicePort: 80
